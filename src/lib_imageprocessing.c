@@ -131,7 +131,7 @@ void aplicar_brilho_threads(imagem *I, float intensidade)
      do{
          for (i=0; i<n_threads; i++){
             pthread_mutex_lock(&trava);
-            if(linha>=I->height){
+            if(linha==I->height){
                 for (j=0; j<i; ++j)
                     pthread_join(threads[j],NULL);
                 return; // Acabou
