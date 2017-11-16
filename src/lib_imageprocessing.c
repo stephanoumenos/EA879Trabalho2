@@ -127,16 +127,21 @@ void aplicar_brilho_threads(imagem *I, float intensidade)
      argumentos->I=I;
      pthread_t threads[n_threads];
      unsigned int linha=0;
-     unsigned int i;
+     unsigned int i,j;
      do{
          for (i=0; i<n_threads; i++){
             pthread_mutex_lock(&trava);
+            if(linha>=I->height){
+                for (j=0; j<i; ++j)
+                    pthread_join(threads[j],NULL);
+                return; // Acabou
+            }
             argumentos->linha=linha++;
             pthread_create(&threads[i],NULL,brilho_thread,argumentos); 
          }
          for (i=0; i<n_threads; i++)
             pthread_join(threads[i],NULL);
-     } while(linha<I->height);
+     } while(1);
 }
 
 void printa_max(imagem *I){
