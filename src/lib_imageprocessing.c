@@ -5,8 +5,10 @@
 #include "imageprocessing.h"
 #include <FreeImage.h>
 #include <alloca.h>
+#include <unistd.h>
 
 #define n_threads 4
+#define n_processes 4
 
 pthread_mutex_t trava;
 
@@ -144,6 +146,28 @@ void aplicar_brilho_threads(imagem *I, float intensidade)
      } while(1);
 }
 
+//void aplicar_brilho_processos(imagem *I, float intensidade)
+//{
+//    /* Muda o brilho da imagem por um fator linear intensidade que
+//     * pode ir de 0 a 1 */
+//    pid_t pids[n_processes];
+//    unsigned int linha=0;
+//    unsigned int i;
+//    for(i=0;i<n_processes;i++){
+//        pid=fork();
+//        if(pid<0){
+//            printf("Erro: não consegui criar processo\n");
+//            exit(1);
+//        }
+//        if(pid==0){
+//            // Child
+//        }
+//    }
+//
+//    for(i=0;i<n_processes;i++){
+//        pid=wait();
+//    }
+//}
 void printa_max(imagem *I){
 
     unsigned int i;
