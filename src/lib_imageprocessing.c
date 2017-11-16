@@ -1,9 +1,14 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <pthread.h>
 #include "imageprocessing.h"
 #include <FreeImage.h>
+#include <alloca.h>
+
+#define n_threads 4
+
+pthread_mutex_t trava;
 
 /*
 imagem abrir_imagem(char *nome_do_arquivo);
@@ -56,6 +61,39 @@ void liberar_imagem(imagem *I) {
   free(I->b);
 }
 
+typedef struct __brilho_args
+{
+    float intensidade;
+    imagem* I;
+    unsigned int linha;
+} brilho_args;
+
+void* brilho_thread(void* argumentos)
+{
+    brilho_args* informacoes=(brilho_args*) argumentos; 
+    float intensidade=informacoes->intensidade;
+    imagem* I=informacoes->I;
+    unsigned int i,idx;
+    unsigned int linha=informacoes->linha;
+    pthread_mutex_unlock(&trava);
+    for (i=0; i<(I->width); i++){
+        idx=linha*I->width+i;
+        if(I->r[idx] * intensidade <= 255 ){
+            I->r[idx] *= intensidade;
+        }
+        else I->r[idx] = 255;
+        if(I->g[idx] * intensidade <= 255 ){
+            I->g[idx] *= intensidade;
+        }
+        else I->g[idx] = 255;
+        if(I->b[idx] * intensidade <= 255 ){
+            I->b[idx] *= intensidade;
+        }
+        else I->b[idx] = 255;
+    }
+    return NULL;
+}
+
 void salvar_imagem(char *nome_do_arquivo, imagem *I) {
   FIBITMAP *bitmapOut;
   RGBQUAD color;
@@ -80,25 +118,25 @@ void salvar_imagem(char *nome_do_arquivo, imagem *I) {
   printf("Imagem salva com sucesso\n");
 }
 
-void aplicar_brilho(imagem *I, float intensidade) {
+void aplicar_brilho_threads(imagem *I, float intensidade)
+{
     /* Muda o brilho da imagem por um fator linear intensidade que
      * pode ir de 0 a 1 */
+     brilho_args* argumentos=alloca(sizeof(brilho_args));
+     argumentos->intensidade=intensidade;
+     argumentos->I=I;
+     pthread_t threads[n_threads];
+     unsigned int linha=0;
      unsigned int i;
-     for (i=0; i<(I->width)*(I->height); i++){
-         if(I->r[i] * intensidade <= 255 ){
-             I->r[i] *= intensidade;
+     do{
+         for (i=0; i<n_threads; i++){
+            pthread_mutex_lock(&trava);
+            argumentos->linha=linha++;
+            pthread_create(&threads[i],NULL,brilho_thread,argumentos); 
          }
-         else I->r[i] = 255;
-         if(I->g[i] * intensidade <= 255 ){
-             I->g[i] *= intensidade;
-         }
-         else I->g[i] = 255;
-         if(I->b[i] * intensidade <= 255 ){
-             I->b[i] *= intensidade;
-         }
-         else I->b[i] = 255;
-   }
-
+         for (i=0; i<n_threads; i++)
+            pthread_join(threads[i],NULL);
+     } while(linha<I->height);
 }
 
 void printa_max(imagem *I){

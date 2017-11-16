@@ -27,7 +27,7 @@ EXPRESSAO:
     | STRING IGUAL STRING VEZES NUMERO{
         printf("Multiplicando o brilho da imagem %s por %s\n", $3, $5);
         imagem I = abrir_imagem($3);
-        aplicar_brilho(&I, atof($5));
+        aplicar_brilho_threads(&I, atof($5));
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
@@ -35,7 +35,7 @@ EXPRESSAO:
     | STRING IGUAL STRING DIVIDIDO NUMERO{
         printf("Dividindo o brilho da imagem %s por %s\n", $3, $5);
         imagem I = abrir_imagem($3);
-        aplicar_brilho(&I, 1/atof($5));
+        aplicar_brilho_threads(&I, 1/atof($5));
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
