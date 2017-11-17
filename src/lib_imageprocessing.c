@@ -7,9 +7,11 @@
 #include <alloca.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/mman.h>
 
-#define n_threads 2
-#define n_processos 700
+#define n_threads 8
+#define n_processos 8
 
 pthread_mutex_t trava;
 
@@ -72,6 +74,7 @@ typedef struct __brilho_args
 } brilho_args;
 
 void altera_linha(unsigned int linha, imagem *I, float intensidade){
+    //printf("BANANA\n");
     unsigned int i,idx;
     for (i=0; i<(I->width); i++){
 	  idx=linha*I->width+i;
@@ -165,37 +168,50 @@ void aplicar_brilho_threads(imagem *I, float intensidade)
      } while(1);
 }
 
-pid_t inicia_processo(imagem* I, float intensidade, unsigned int linha)
-{
-    pid_t novo_processo = fork();
-    if(novo_processo==0){ // Filho
-        printf("%u\n", linha);
-        altera_linha(linha, I, intensidade);
-        exit(0);
-    }
-    return novo_processo;
-}
-
 void aplicar_brilho_processos(imagem *I, float intensidade)
 {
     /* Muda o brilho da imagem por um fator linear intensidade que
      * pode ir de 0 a 1 */
-    pid_t pid[n_threads];
+    pid_t pid;
     unsigned int i,j;
     unsigned int linha=0;
-    int status;
+    // Readable and writable
+    int protection = PROT_READ | PROT_WRITE;
+    
+    int visibility = MAP_ANONYMOUS | MAP_SHARED;
+
+    imagem* shared_memory=mmap(NULL,sizeof(*I), protection, visibility, 0, 0);
+    shared_memory->width=I->width;
+    shared_memory->height=I->height;
+    (shared_memory->r)= (float*) mmap(NULL,sizeof(float)*I->height*I->width, protection, visibility, 0, 0);
+    (shared_memory->g)= (float*) mmap(NULL,sizeof(float)* I->height*I->width, protection, visibility, 0, 0);
+    (shared_memory->b)= (float*) mmap(NULL,sizeof(float)* I->height*I->width, protection, visibility, 0, 0);
+
+    for(i=0;i<(I->width*I->height);++i){
+        /* Copia imagem para memória compartilhada */
+        shared_memory->r[i] = I->r[i];
+        shared_memory->g[i] = I->g[i];
+        shared_memory->b[i] = I->b[i];
+    }
+
+
     while(linha<I->height){
         for(i=0;i<n_processos;++i){
             if(linha==I->height){
                 for(j=0;j<i;j++)
                     wait(NULL);
+                for(i=0;i<(I->width*I->height);++i){
+                    /* Copia imagem da memória compartilhada para a imagem original */
+                    I->r[i] = shared_memory->r[i];
+                    I->g[i] = shared_memory->g[i];
+                    I->b[i] = shared_memory->b[i];
+                }
                 return;
             }
-            pid_t current = fork(); 
-            if(current==0){
-                printf("%u\n", linha);
-                pid[i]=current;
-                altera_linha(linha, I, intensidade);
+            pid = fork(); 
+            if(pid==0){ // Filho
+                //printf("%u\n", linha);
+                altera_linha(linha, shared_memory, intensidade);
                 exit(0);
             }
             linha++;
@@ -203,6 +219,12 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
         for(i=0;i<n_processos;++i){
             wait(NULL);
         }
+    }
+    for(i=0;i<(I->width*I->height);++i){
+        /* Copia imagem da memória compartilhada para a imagem original */
+        I->r[i] = shared_memory->r[i];
+        I->g[i] = shared_memory->g[i];
+        I->b[i] = shared_memory->b[i];
     }
 }
 

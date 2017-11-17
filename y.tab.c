@@ -1239,9 +1239,9 @@ yyreduce:
     {
         printf("Multiplicando o brilho da imagem %s por %s\n", (yyvsp[-2].strval), (yyvsp[0].strval));
         struct timeval tempo_inicial, tempo_final, diferenca;
-        imagem I = abrir_imagem((yyvsp[-2].strval));
         // Thread
-        printf("Usando múltiplas threads...\n");
+        printf("Usando múltiplas threads...\n\n");
+        imagem I = abrir_imagem((yyvsp[-2].strval));
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_threads(&I, atof((yyvsp[0].strval)));
         gettimeofday(&tempo_final,NULL);
@@ -1250,8 +1250,8 @@ yyreduce:
         salvar_imagem("thread.jpg", &I);
         liberar_imagem(&I);
         // Processos
+        printf("Usando múltiplos processos...\n\n");
         I = abrir_imagem((yyvsp[-2].strval));
-        printf("Usando múltiplos processos...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_processos(&I, atof((yyvsp[0].strval)));
         gettimeofday(&tempo_final,NULL);
@@ -1260,8 +1260,8 @@ yyreduce:
         salvar_imagem("processos.jpg", &I);
         liberar_imagem(&I);
         // Linhas
+        printf("Varrendo pelas linhas...\n\n");
         I = abrir_imagem((yyvsp[-2].strval));
-        printf("Varrendo pelas linhas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_linhas(&I, atof((yyvsp[0].strval)));
         gettimeofday(&tempo_final,NULL);
@@ -1270,8 +1270,8 @@ yyreduce:
         salvar_imagem("linhas.jpg", &I);
         liberar_imagem(&I);
         // Colunas
+        printf("Varrendo pelas colunas...\n\n");
         I = abrir_imagem((yyvsp[-2].strval));
-        printf("Varrendo pelas colunas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_colunas(&I, atof((yyvsp[0].strval)));
         gettimeofday(&tempo_final,NULL);

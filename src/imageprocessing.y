@@ -30,9 +30,9 @@ EXPRESSAO:
     | STRING IGUAL STRING VEZES NUMERO{
         printf("Multiplicando o brilho da imagem %s por %s\n", $3, $5);
         struct timeval tempo_inicial, tempo_final, diferenca;
-        imagem I = abrir_imagem($3);
         // Thread
-        printf("Usando múltiplas threads...\n");
+        printf("Usando múltiplas threads...\n\n");
+        imagem I = abrir_imagem($3);
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_threads(&I, atof($5));
         gettimeofday(&tempo_final,NULL);
@@ -41,8 +41,8 @@ EXPRESSAO:
         salvar_imagem("thread.jpg", &I);
         liberar_imagem(&I);
         // Processos
+        printf("Usando múltiplos processos...\n\n");
         I = abrir_imagem($3);
-        printf("Usando múltiplos processos...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_processos(&I, atof($5));
         gettimeofday(&tempo_final,NULL);
@@ -51,8 +51,8 @@ EXPRESSAO:
         salvar_imagem("processos.jpg", &I);
         liberar_imagem(&I);
         // Linhas
+        printf("Varrendo pelas linhas...\n\n");
         I = abrir_imagem($3);
-        printf("Varrendo pelas linhas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_linhas(&I, atof($5));
         gettimeofday(&tempo_final,NULL);
@@ -61,8 +61,8 @@ EXPRESSAO:
         salvar_imagem("linhas.jpg", &I);
         liberar_imagem(&I);
         // Colunas
+        printf("Varrendo pelas colunas...\n\n");
         I = abrir_imagem($3);
-        printf("Varrendo pelas colunas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_colunas(&I, atof($5));
         gettimeofday(&tempo_final,NULL);
