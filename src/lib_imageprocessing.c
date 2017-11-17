@@ -75,19 +75,32 @@ void altera_linha(unsigned int linha, imagem *I, float intensidade){
     unsigned int i,idx;
     for (i=0; i<(I->width); i++){
 	  idx=linha*I->width+i;
-	  if(I->r[idx] * intensidade <= 255 ){
+	  if(I->r[idx] * intensidade <= 255 )
 	      I->r[idx] *= intensidade;
-	  }
 	  else I->r[idx] = 255;
-	  if(I->g[idx] * intensidade <= 255 ){
+	  if(I->g[idx] * intensidade <= 255 )
 	      I->g[idx] *= intensidade;
-	  }
 	  else I->g[idx] = 255;
-	  if(I->b[idx] * intensidade <= 255 ){
+	  if(I->b[idx] * intensidade <= 255 )
 	      I->b[idx] *= intensidade;
-	  }
 	  else I->b[idx] = 255;
-      }
+    }
+}
+
+void altera_coluna(unsigned int coluna, imagem *I, float intensidade){
+    unsigned int i,idx;
+    for (i=0; i<(I->height); i++){
+	  idx=coluna+i*I->width;
+	  if(I->r[idx] * intensidade <= 255 )
+	      I->r[idx] *= intensidade;
+	  else I->r[idx] = 255;
+	  if(I->g[idx] * intensidade <= 255 )
+	      I->g[idx] *= intensidade;
+	  else I->g[idx] = 255;
+	  if(I->b[idx] * intensidade <= 255 )
+	      I->b[idx] *= intensidade;
+	  else I->b[idx] = 255;
+    }
 }
 
 void* brilho_thread(void* argumentos)
@@ -156,30 +169,41 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
 {
     /* Muda o brilho da imagem por um fator linear intensidade que
      * pode ir de 0 a 1 */
-    pid_t pid, pid_temp;
-    unsigned int linha=0;
+    pid_t pid[10], pid_temp;
+    unsigned int linha=1200;
     unsigned int i,j;
     int status;
-    for(j=0; j<800 ; j++){
+    for(j=0; j<2 ; j++){
         for(i=0;i<n_processes;i++){
-            pid=fork();
-            if(pid<0){
+            pid[i]=fork();
+            if(pid[i]<0){
                 printf("Erro: não consegui criar processo\n");
                 exit(1);
             }
-            if(pid==0){
+            if(pid[i]==0){
                 // Child
                 altera_linha(linha, I, intensidade);
                 exit(0);
             }
-            if(pid>0){
+            if(pid[i]>0){
                 linha++;
 	    }
         }
-        for(i=0;i<n_processes;++i){
+        for(i=0;i<n_processes;++i)
             pid_temp = wait(&status);
-	}    
     }
+}
+
+void aplicar_brilho_linhas(imagem* I, float intensidade)
+{
+    for(unsigned int linha=0;linha<I->height;++linha)
+        altera_linha(linha, I, intensidade);
+}
+
+void aplicar_brilho_colunas(imagem* I, float intensidade)
+{
+    for(unsigned int colunas=0;colunas<I->width;++colunas)
+        altera_coluna(colunas, I, intensidade);
 }
 
 void printa_max(imagem *I){
