@@ -160,7 +160,7 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
     unsigned int linha=0;
     unsigned int i,j;
     int status;
-    while(j=0;j<800;++j){
+    while(j=0; j<800 ; j++){
         for(i=0;i<n_processes;i++){
             pid=fork();
             if(pid<0){
@@ -172,11 +172,13 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
                 altera_linha(linha, I, intensidade);
                 exit(0);
             }
-            else
+            if(pid>0){
                 linha++;
+	    }
         }
-        for(i=0;i<n_processes;++i)
+        for(i=0;i<n_processes;++i){
             pid_temp = wait(&status);
+	}    
     }
 }
 
