@@ -70,6 +70,25 @@ typedef struct __brilho_args
     unsigned int linha;
 } brilho_args;
 
+void altera_linha(unsigned int linha, imagem *I, float intensidade){
+    unsigned int i,idx;
+    for (i=0; i<(I->width); i++){
+	  idx=linha*I->width+i;
+	  if(I->r[idx] * intensidade <= 255 ){
+	      I->r[idx] *= intensidade;
+	  }
+	  else I->r[idx] = 255;
+	  if(I->g[idx] * intensidade <= 255 ){
+	      I->g[idx] *= intensidade;
+	  }
+	  else I->g[idx] = 255;
+	  if(I->b[idx] * intensidade <= 255 ){
+	      I->b[idx] *= intensidade;
+	  }
+	  else I->b[idx] = 255;
+      }
+}
+
 void* brilho_thread(void* argumentos)
 {
     brilho_args* informacoes=(brilho_args*) argumentos; 
@@ -78,21 +97,7 @@ void* brilho_thread(void* argumentos)
     unsigned int i,idx;
     unsigned int linha=informacoes->linha;
     pthread_mutex_unlock(&trava);
-    for (i=0; i<(I->width); i++){
-        idx=linha*I->width+i;
-        if(I->r[idx] * intensidade <= 255 ){
-            I->r[idx] *= intensidade;
-        }
-        else I->r[idx] = 255;
-        if(I->g[idx] * intensidade <= 255 ){
-            I->g[idx] *= intensidade;
-        }
-        else I->g[idx] = 255;
-        if(I->b[idx] * intensidade <= 255 ){
-            I->b[idx] *= intensidade;
-        }
-        else I->b[idx] = 255;
-    }
+    altera_linha(linha, I, intensidade);
     return NULL;
 }
 
@@ -146,28 +151,31 @@ void aplicar_brilho_threads(imagem *I, float intensidade)
      } while(1);
 }
 
-//void aplicar_brilho_processos(imagem *I, float intensidade)
-//{
-//    /* Muda o brilho da imagem por um fator linear intensidade que
-//     * pode ir de 0 a 1 */
-//    pid_t pids[n_processes];
-//    unsigned int linha=0;
-//    unsigned int i;
-//    for(i=0;i<n_processes;i++){
-//        pid=fork();
-//        if(pid<0){
-//            printf("Erro: não consegui criar processo\n");
-//            exit(1);
-//        }
-//        if(pid==0){
-//            // Child
-//        }
-//    }
-//
-//    for(i=0;i<n_processes;i++){
-//        pid=wait();
-//    }
-//}
+void aplicar_brilho_processos(imagem *I, float intensidade)
+{
+    /* Muda o brilho da imagem por um fator linear intensidade que
+     * pode ir de 0 a 1 */
+    pid_t pid;
+    unsigned int linha=0;
+    unsigned int i;
+    for(i=0;i<n_processes;i++){
+        pid=fork();
+        if(pid<0){
+            printf("Erro: não consegui criar processo\n");
+            exit(1);
+        }
+        if(pid==0){
+            // Child
+	  
+        }
+        else
+	  linhas++;
+    }
+
+    for(i=0;i<n_processes;i++){
+        pid=wait();
+    }
+}
 void printa_max(imagem *I){
 
     unsigned int i;
