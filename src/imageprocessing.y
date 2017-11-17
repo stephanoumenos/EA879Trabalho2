@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include <string.h>
 
 void yyerror(char *c);
 int yylex(void);
@@ -30,20 +31,56 @@ EXPRESSAO:
         printf("Multiplicando o brilho da imagem %s por %s\n", $3, $5);
         struct timeval tempo_inicial, tempo_final, diferenca;
         imagem I = abrir_imagem($3);
+        // Thread
         printf("Usando múltiplas threads...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_threads(&I, atof($5));
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        // Linhas
+        printf("Varrendo pelas linhas...\n");
+        gettimeofday(&tempo_inicial,NULL);
+        aplicar_brilho_linhas(&I, atof($5));
+        gettimeofday(&tempo_final,NULL);
+        timersub(&tempo_final,&tempo_inicial,&diferenca);
+        printf("O tempo pelas linhas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        // Colunas
+        printf("Varrendo pelas colunas...\n");
+        gettimeofday(&tempo_inicial,NULL);
+        aplicar_brilho_colunas(&I, atof($5));
+        gettimeofday(&tempo_final,NULL);
+        timersub(&tempo_final,&tempo_inicial,&diferenca);
+        printf("O tempo pelas colunas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
 
     | STRING IGUAL STRING DIVIDIDO NUMERO{
         printf("Dividindo o brilho da imagem %s por %s\n", $3, $5);
+        struct timeval tempo_inicial, tempo_final, diferenca;
         imagem I = abrir_imagem($3);
+        // Thread
+        printf("Usando múltiplas threads...\n");
+        gettimeofday(&tempo_inicial,NULL);
+        aplicar_brilho_threads(&I, 1/atof($5));
+        gettimeofday(&tempo_final,NULL);
+        timersub(&tempo_final,&tempo_inicial,&diferenca);
+        printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        // Linhas
+        printf("Varrendo pelas linhas...\n");
+        gettimeofday(&tempo_inicial,NULL);
+        aplicar_brilho_linhas(&I, 1/atof($5));
+        gettimeofday(&tempo_final,NULL);
+        timersub(&tempo_final,&tempo_inicial,&diferenca);
+        printf("O tempo pelas linhas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        // Colunas
+        printf("Varrendo pelas colunas...\n");
+        gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_colunas(&I, 1/atof($5));
+        gettimeofday(&tempo_final,NULL);
+        timersub(&tempo_final,&tempo_inicial,&diferenca);
+        printf("O tempo pelas colunas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
