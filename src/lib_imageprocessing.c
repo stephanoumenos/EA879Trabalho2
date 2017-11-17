@@ -11,7 +11,7 @@
 #include <sys/mman.h>
 
 #define n_threads 8
-#define n_processos 8
+#define n_processos 500
 
 pthread_mutex_t trava;
 
@@ -200,13 +200,7 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
             if(linha==I->height){
                 for(j=0;j<i;j++)
                     wait(NULL);
-                for(i=0;i<(I->width*I->height);++i){
-                    /* Copia imagem da memória compartilhada para a imagem original */
-                    I->r[i] = shared_memory->r[i];
-                    I->g[i] = shared_memory->g[i];
-                    I->b[i] = shared_memory->b[i];
-                }
-                return;
+                goto copia;
             }
             pid = fork(); 
             if(pid==0){ // Filho
@@ -220,6 +214,7 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
             wait(NULL);
         }
     }
+copia:
     for(i=0;i<(I->width*I->height);++i){
         /* Copia imagem da memória compartilhada para a imagem original */
         I->r[i] = shared_memory->r[i];
