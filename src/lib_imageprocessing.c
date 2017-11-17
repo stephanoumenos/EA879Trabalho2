@@ -166,7 +166,7 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
         }
         if(pid==0){
             // Child
-	  
+	    altera_linha(linha, I, intensidade);
         }
         else
 	  linhas++;
