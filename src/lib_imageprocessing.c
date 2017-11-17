@@ -6,6 +6,7 @@
 #include <FreeImage.h>
 #include <alloca.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define n_threads 4
 #define n_processes 4
@@ -155,27 +156,30 @@ void aplicar_brilho_processos(imagem *I, float intensidade)
 {
     /* Muda o brilho da imagem por um fator linear intensidade que
      * pode ir de 0 a 1 */
-    pid_t pid;
+    pid_t pid, pid_temp;
     unsigned int linha=0;
-    unsigned int i;
-    for(i=0;i<n_processes;i++){
-        pid=fork();
-        if(pid<0){
-            printf("Erro: não consegui criar processo\n");
-            exit(1);
+    unsigned int i,j;
+    int status;
+    while(j=0;j<800;++j){
+        for(i=0;i<n_processes;i++){
+            pid=fork();
+            if(pid<0){
+                printf("Erro: não consegui criar processo\n");
+                exit(1);
+            }
+            if(pid==0){
+                // Child
+                altera_linha(linha, I, intensidade);
+                exit(0);
+            }
+            else
+                linha++;
         }
-        if(pid==0){
-            // Child
-	    altera_linha(linha, I, intensidade);
-        }
-        else
-	  linhas++;
-    }
-
-    for(i=0;i<n_processes;i++){
-        pid=wait();
+        for(i=0;i<n_processes;++i)
+            pid_temp = wait(&status);
     }
 }
+
 void printa_max(imagem *I){
 
     unsigned int i;

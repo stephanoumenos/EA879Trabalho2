@@ -1236,7 +1236,7 @@ yyreduce:
     {
         printf("Multiplicando o brilho da imagem %s por %s\n", (yyvsp[-2].strval), (yyvsp[0].strval));
         imagem I = abrir_imagem((yyvsp[-2].strval));
-        aplicar_brilho(&I, atof((yyvsp[0].strval)));
+        aplicar_brilho_processos(&I, atof((yyvsp[0].strval)));
         salvar_imagem((yyvsp[-4].strval), &I);
         liberar_imagem(&I);
     }
@@ -1248,7 +1248,7 @@ yyreduce:
     {
         printf("Dividindo o brilho da imagem %s por %s\n", (yyvsp[-2].strval), (yyvsp[0].strval));
         imagem I = abrir_imagem((yyvsp[-2].strval));
-        aplicar_brilho(&I, 1/atof((yyvsp[0].strval)));
+        aplicar_brilho_processos(&I, 1/atof((yyvsp[0].strval)));
         salvar_imagem((yyvsp[-4].strval), &I);
         liberar_imagem(&I);
     }
