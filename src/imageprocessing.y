@@ -3,6 +3,8 @@
 #include "imageprocessing.h"
 #include <FreeImage.h>
 #include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
 
 void yyerror(char *c);
 int yylex(void);
@@ -26,8 +28,14 @@ PROGRAMA:
 EXPRESSAO:
     | STRING IGUAL STRING VEZES NUMERO{
         printf("Multiplicando o brilho da imagem %s por %s\n", $3, $5);
+        struct timeval tempo_inicial, tempo_final, diferenca;
         imagem I = abrir_imagem($3);
-        aplicar_brilho_processos(&I, atof($5));
+        printf("Usando múltiplas threads...\n");
+        gettimeofday(&tempo_inicial,NULL);
+        aplicar_brilho_threads(&I, atof($5));
+        gettimeofday(&tempo_final,NULL);
+        timersub(&tempo_final,&tempo_inicial,&diferenca);
+        printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
@@ -35,7 +43,7 @@ EXPRESSAO:
     | STRING IGUAL STRING DIVIDIDO NUMERO{
         printf("Dividindo o brilho da imagem %s por %s\n", $3, $5);
         imagem I = abrir_imagem($3);
-        aplicar_brilho_processos(&I, 1/atof($5));
+        aplicar_brilho_colunas(&I, 1/atof($5));
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
