@@ -38,20 +38,37 @@ EXPRESSAO:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        salvar_imagem("thread.jpg", &I);
+        liberar_imagem(&I);
+        // Processos
+        I = abrir_imagem($3);
+        printf("Usando múltiplos processos...\n");
+        gettimeofday(&tempo_inicial,NULL);
+        aplicar_brilho_processos(&I, atof($5));
+        gettimeofday(&tempo_final,NULL);
+        timersub(&tempo_final,&tempo_inicial,&diferenca);
+        printf("O tempo para processos foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        salvar_imagem("processos.jpg", &I);
+        liberar_imagem(&I);
         // Linhas
+        I = abrir_imagem($3);
         printf("Varrendo pelas linhas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_linhas(&I, atof($5));
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas linhas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        salvar_imagem("linhas.jpg", &I);
+        liberar_imagem(&I);
         // Colunas
+        I = abrir_imagem($3);
         printf("Varrendo pelas colunas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_colunas(&I, atof($5));
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas colunas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        salvar_imagem("colunas.jpg", &I);
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
@@ -67,20 +84,27 @@ EXPRESSAO:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        salvar_imagem("thread.jpg", &I);
+        liberar_imagem(&I);
         // Linhas
+        I = abrir_imagem($3);
         printf("Varrendo pelas linhas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_linhas(&I, 1/atof($5));
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas linhas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        salvar_imagem("linhas.jpg", &I);
+        liberar_imagem(&I);
         // Colunas
+        I = abrir_imagem($3);
         printf("Varrendo pelas colunas...\n");
         gettimeofday(&tempo_inicial,NULL);
         aplicar_brilho_colunas(&I, 1/atof($5));
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas colunas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
+        salvar_imagem("colunas.jpg", &I);
         salvar_imagem($1, &I);
         liberar_imagem(&I);
     }

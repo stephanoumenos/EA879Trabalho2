@@ -8,8 +8,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-#define n_threads 4
-#define n_processes 4
+#define n_threads 2
+#define n_processos 700
 
 pthread_mutex_t trava;
 
@@ -165,32 +165,44 @@ void aplicar_brilho_threads(imagem *I, float intensidade)
      } while(1);
 }
 
+pid_t inicia_processo(imagem* I, float intensidade, unsigned int linha)
+{
+    pid_t novo_processo = fork();
+    if(novo_processo==0){ // Filho
+        printf("%u\n", linha);
+        altera_linha(linha, I, intensidade);
+        exit(0);
+    }
+    return novo_processo;
+}
+
 void aplicar_brilho_processos(imagem *I, float intensidade)
 {
     /* Muda o brilho da imagem por um fator linear intensidade que
      * pode ir de 0 a 1 */
-    pid_t pid[10], pid_temp;
-    unsigned int linha=1200;
+    pid_t pid[n_threads];
     unsigned int i,j;
+    unsigned int linha=0;
     int status;
-    for(j=0; j<2 ; j++){
-        for(i=0;i<n_processes;i++){
-            pid[i]=fork();
-            if(pid[i]<0){
-                printf("Erro: não consegui criar processo\n");
-                exit(1);
+    while(linha<I->height){
+        for(i=0;i<n_processos;++i){
+            if(linha==I->height){
+                for(j=0;j<i;j++)
+                    wait(NULL);
+                return;
             }
-            if(pid[i]==0){
-                // Child
+            pid_t current = fork(); 
+            if(current==0){
+                printf("%u\n", linha);
+                pid[i]=current;
                 altera_linha(linha, I, intensidade);
                 exit(0);
             }
-            if(pid[i]>0){
-                linha++;
-	    }
+            linha++;
         }
-        for(i=0;i<n_processes;++i)
-            pid_temp = wait(&status);
+        for(i=0;i<n_processos;++i){
+            wait(NULL);
+        }
     }
 }
 
