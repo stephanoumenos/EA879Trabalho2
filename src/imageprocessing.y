@@ -41,7 +41,7 @@ EXPRESSAO:
         printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         strcpy(str_temp, "thread_");
         strcat(str_temp, $3);
-        salvar_imagem(str_temp, &I);
+        //salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
         // Processos
         printf("Usando múltiplos processos...\n\n");
@@ -53,7 +53,7 @@ EXPRESSAO:
         printf("O tempo para processos foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         strcpy(str_temp, "processos_");
         strcat(str_temp, $3);
-        salvar_imagem(str_temp, &I);
+        //salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
         // Linhas
         printf("Varrendo pelas linhas...\n\n");
@@ -65,7 +65,7 @@ EXPRESSAO:
         printf("O tempo pelas linhas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         strcpy(str_temp, "linhas_");
         strcat(str_temp, $3);
-        salvar_imagem(str_temp, &I);
+        //salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
         // Colunas
         printf("Varrendo pelas colunas...\n\n");
@@ -77,7 +77,7 @@ EXPRESSAO:
         printf("O tempo pelas colunas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         strcpy(str_temp, "colunas_");
         strcat(str_temp, $3);
-        salvar_imagem(str_temp, &I);
+        //salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
     }
 
@@ -92,7 +92,7 @@ EXPRESSAO:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
-        salvar_imagem("thread.jpg", &I);
+        //salvar_imagem("thread.jpg", &I);
         liberar_imagem(&I);
         // Linhas
         I = abrir_imagem($3);
@@ -102,7 +102,7 @@ EXPRESSAO:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas linhas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
-        salvar_imagem("linhas.jpg", &I);
+        //salvar_imagem("linhas.jpg", &I);
         liberar_imagem(&I);
         // Colunas
         I = abrir_imagem($3);
@@ -113,7 +113,7 @@ EXPRESSAO:
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas colunas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
         salvar_imagem("colunas.jpg", &I);
-        salvar_imagem($1, &I);
+        //salvar_imagem($1, &I);
         liberar_imagem(&I);
     }
 
