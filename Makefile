@@ -16,5 +16,5 @@ lib_imageprocessing.o:$(SRCDIR)/lib_imageprocessing.c
 clean:
 	rm *.h lex.yy.c y.tab.c *.o main
 
-test:
+test: all
 	sh teste.sh
