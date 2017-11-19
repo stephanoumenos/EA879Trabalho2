@@ -462,7 +462,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    25,    25,    26,    29,    30,    76,   112,   119
+       0,    25,    25,    26,    29,    30,    84,   120,   127
 };
 #endif
 
@@ -1237,6 +1237,7 @@ yyreduce:
         case 5:
 #line 30 "./src/imageprocessing.y" /* yacc.c:1646  */
     {
+        char str_temp[1000];
         printf("Multiplicando o brilho da imagem %s por %s\n", (yyvsp[-2].strval), (yyvsp[0].strval));
         struct timeval tempo_inicial, tempo_final, diferenca;
         // Thread
@@ -1247,7 +1248,9 @@ yyreduce:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo para threads foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
-        salvar_imagem("thread.jpg", &I);
+        strcpy(str_temp, "thread_");
+        strcat(str_temp, (yyvsp[-2].strval));
+        salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
         // Processos
         printf("Usando múltiplos processos...\n\n");
@@ -1257,7 +1260,9 @@ yyreduce:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo para processos foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
-        salvar_imagem("processos.jpg", &I);
+        strcpy(str_temp, "processos_");
+        strcat(str_temp, (yyvsp[-2].strval));
+        salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
         // Linhas
         printf("Varrendo pelas linhas...\n\n");
@@ -1267,7 +1272,9 @@ yyreduce:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas linhas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
-        salvar_imagem("linhas.jpg", &I);
+        strcpy(str_temp, "linhas_");
+        strcat(str_temp, (yyvsp[-2].strval));
+        salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
         // Colunas
         printf("Varrendo pelas colunas...\n\n");
@@ -1277,15 +1284,16 @@ yyreduce:
         gettimeofday(&tempo_final,NULL);
         timersub(&tempo_final,&tempo_inicial,&diferenca);
         printf("O tempo pelas colunas foi: %ld.%06ld segundos\n", diferenca.tv_sec, diferenca.tv_usec);
-        salvar_imagem("colunas.jpg", &I);
-        salvar_imagem((yyvsp[-4].strval), &I);
+        strcpy(str_temp, "colunas_");
+        strcat(str_temp, (yyvsp[-2].strval));
+        salvar_imagem(str_temp, &I);
         liberar_imagem(&I);
     }
-#line 1285 "y.tab.c" /* yacc.c:1646  */
+#line 1293 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 76 "./src/imageprocessing.y" /* yacc.c:1646  */
+#line 84 "./src/imageprocessing.y" /* yacc.c:1646  */
     {
         printf("Dividindo o brilho da imagem %s por %s\n", (yyvsp[-2].strval), (yyvsp[0].strval));
         struct timeval tempo_inicial, tempo_final, diferenca;
@@ -1321,11 +1329,11 @@ yyreduce:
         salvar_imagem((yyvsp[-4].strval), &I);
         liberar_imagem(&I);
     }
-#line 1325 "y.tab.c" /* yacc.c:1646  */
+#line 1333 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 112 "./src/imageprocessing.y" /* yacc.c:1646  */
+#line 120 "./src/imageprocessing.y" /* yacc.c:1646  */
     {
         printf("Copiando %s para %s\n", (yyvsp[0].strval), (yyvsp[-2].strval));
         imagem I = abrir_imagem((yyvsp[0].strval));
@@ -1333,11 +1341,11 @@ yyreduce:
         salvar_imagem((yyvsp[-2].strval), &I);
         liberar_imagem(&I);
                           }
-#line 1337 "y.tab.c" /* yacc.c:1646  */
+#line 1345 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 119 "./src/imageprocessing.y" /* yacc.c:1646  */
+#line 127 "./src/imageprocessing.y" /* yacc.c:1646  */
     {
         printf("Encontrando intensidade maxima de %s\n", (yyvsp[-1].strval));
         imagem I = abrir_imagem((yyvsp[-1].strval));
@@ -1345,11 +1353,11 @@ yyreduce:
         printa_max(&I);
         liberar_imagem(&I);
     }
-#line 1349 "y.tab.c" /* yacc.c:1646  */
+#line 1357 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1353 "y.tab.c" /* yacc.c:1646  */
+#line 1361 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1577,7 +1585,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 128 "./src/imageprocessing.y" /* yacc.c:1906  */
+#line 136 "./src/imageprocessing.y" /* yacc.c:1906  */
 
 
 void yyerror(char *s) {

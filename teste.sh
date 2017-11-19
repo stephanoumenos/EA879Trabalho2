@@ -1,16 +1,23 @@
 #/bin/bash
 
-rm -f temp_file
-
 touch temp_file
 
-for i in $( ls test_images/ ); do
-    echo -n test_images/ >> temp_file
-    echo i >> temp_file
+for i in $( ls | grep .jpg  ); do
+    echo teste=$i*0.5 > temp_file
+    ./main < temp_file
 done
 
-# Arquivo com nome das fotos pronto
+rm -f temp_file
 
-./main < temp_file # Usa como entrada para o programa
+rm -rf test_results/
+
+mkdir -p test_results/
+
+mv processos* test_results/
+mv thread* test_results/
+mv linhas* test_results/
+mv colunas* test_results/
+
+
 
 

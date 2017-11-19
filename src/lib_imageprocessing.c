@@ -11,7 +11,7 @@
 #include <sys/mman.h>
 
 #define n_threads 8
-#define n_processos 500
+#define n_processos 8
 
 pthread_mutex_t trava;
 
