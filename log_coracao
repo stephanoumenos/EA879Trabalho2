@@ -1,0 +1,33 @@
+Arquivo: coracao.jpg (5.83 KB 32x32 pixels)
+Processador: i5 4670
+
+Tempo varrendo por linhas:
+    0.001327 segundos
+
+Tempo varrendo por colunas:
+    0.001839 segundos
+
+1000 Threads:
+    0.006037 segundos
+1000 Processos:
+    0.058123 segundos
+
+500 Threads:
+    0.005321 segundos
+500 Processos:
+    0.058055 segundos
+
+4 Threads:
+    0.004070 segundos    
+4 Processos:
+    0.095002 segundos
+
+2 Threads:
+    0.004589 segundos
+2 Processos:
+    0.130191 segundos
+
+1 Thread:
+    0.005499 segundos
+1 Processo:
+    0.197516 segundos
