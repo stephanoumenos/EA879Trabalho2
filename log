@@ -1,0 +1,34 @@
+Arquivo: landscape.jpg (14 MB 10109x4542 pixels)
+Processador: i5 4670
+
+Tempo varrendo por linhas:
+    0.461968 segundos
+
+Tempo varrendo por colunas:
+    2.334444 segundos
+
+1000 Threads:
+    0.212527 segundos
+1000 Processos:
+    47.446358 segundos 
+
+500 Threads: 
+    0.219126 segundos
+500 Processos:
+    46.165128 segundos
+
+4 Threads:
+    0.192447 segundos
+4 Processos:
+    61.838626 segundos
+
+2 Threads:
+    0.293999 segundos
+2 Processos:
+    105.715202 segundos
+    
+1 Thread:
+    0.720590 segundos
+1 Processo:
+    112.088242 segundos
+    
